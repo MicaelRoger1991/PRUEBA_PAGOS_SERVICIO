@@ -24,6 +24,20 @@ docker exec -it postgres-container psql -U postgres -c "CREATE DATABASE db_esapp
 docker exec -it postgres-container psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE db_esapp TO userdb_esapp;"
 ```
 
+### 2.3 Rollback de base y usuario
+Si necesitas borrar todo y volver a crear desde cero:
+```bash
+docker exec -it postgres-container psql -U postgres -c "DROP DATABASE IF EXISTS db_esapp;"
+docker exec -it postgres-container psql -U postgres -c "DROP USER IF EXISTS userdb_esapp;"
+```
+
+### 2.4 Docker (API)
+Para construir y correr la API con Docker:
+```bash
+docker build -t esapp-api .
+docker run -p 8080:8080 --name esapp-api esapp-api
+```
+
 ## 3. Configuración de conexión (appsettings.json)
 La app usa `DataBaseSettings` con password cifrado y `secretKey` para desencriptar.
 
@@ -73,20 +87,14 @@ dotnet restore
 ```bash
 dotnet tool install --global dotnet-ef
 ```
-1) Crea la migración inicial:
+1) Crea la migración inicial (si no existen migraciones):
 ```bash
 dotnet ef migrations add InitialCreate \
   -p Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj \
   -s Presentation/EsApp.Api/EsApp.Api.csproj \
   -o Infrastructure/EsApp.Persistence/Migrations
 ```
-Si ya existe `InitialCreate`, crea una migración nueva con otro nombre, por ejemplo:
-```bash
-dotnet ef migrations add AddPaymentsServices \
-  -p Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj \
-  -s Presentation/EsApp.Api/EsApp.Api.csproj \
-  -o Infrastructure/EsApp.Persistence/Migrations
-```
+
 1) Aplica la migración a la base:
 ```bash
 dotnet ef database update \
@@ -97,12 +105,14 @@ dotnet ef database update \
 Notas:
 - La conexión se construye desde `DataBaseSettings` usando `ISecurityEncrypt`.
 - Si la red está restringida, habilita acceso a NuGet antes de `dotnet restore`.
+- Si hiciste rollback solo de la BD (sin borrar migraciones), basta con `dotnet ef database update`.
+- Si el modelo cambió después de la última migración, crea una migración nueva con nombre distinto.
 
 ## 6. Usuarios de prueba
 Se insertan 3 usuarios al aplicar migraciones (tabla `usersMaster`):
-- `caja` / pass: `123abc` / rol: `CAJA`
-- `plataforma` / pass: `123abc` / rol: `PLATAFORMA`
-- `gerente` / pass: `123abc` / rol: `GERENTE`
+- user: `caja` / pass: `123abc` / rol: `CAJA`
+- user: `plataforma` / pass: `123abc` / rol: `PLATAFORMA`
+- user: `gerente` / pass: `123abc` / rol: `GERENTE`
 
 Estos usuarios sirven para probar el login/JWT desde el inicio.
 
@@ -153,7 +163,26 @@ Busca cliente por número de documento. Requiere JWT y rol **CAJA**, **PLATAFORM
 GET /Customers/GetCustomerByDocumentNumber?documentNumber=12345678
 ```
 
-6) Header para endpoints protegidos
+6) Payments - RegisterPayment
+Registra un pago. Solo rol **CAJA**.
+```http
+POST /payments
+Content-Type: application/json
+
+{
+  "customerId": "<guid_cliente>",
+  "serviceProviderId": "<guid_servicio>",
+  "amount": 120.50
+}
+```
+
+7) Payments - GetPayments
+Consulta pagos por cliente. Solo rol **CAJA**.
+```http
+GET /payments?customerId=<guid_cliente>
+```
+
+8) Header para endpoints protegidos
 ```http
 Authorization: Bearer <token>
 ```
@@ -172,19 +201,12 @@ Buenas prácticas aplicadas:
 - DTOs/Request/Response y validaciones en Application.
 - Configuración centralizada y reutilizable.
 
-## 9. Avance del examen (lo ya logrado)
-- Migración a EF Core (Code First) con PostgreSQL.
-- Esquema completo y relaciones: usuarios, sesiones, monedas, clientes, proveedores y pagos.
-- Usuarios, clientes y catálogos para pruebas rápidas.
-- Endpoints listos (monedas, servicios, clientes por documento).
-
-## 10. Extras no solicitados (pero ya incluidos)
+### 8.1 Extras implementados
 - Login con JWT + refresh token.
 - Control de rol en endpoints (ej. clientes solo CAJA/PLATAFORMA/GERENTE).
 - Test unitario básico para encriptación.
 
-
-## 11. Tests
+## 9. Tests
 Proyecto de pruebas: `Presentation/EsApp.Api.Test`
 
 ### Prueba de encriptación

@@ -28,4 +28,19 @@ public class CustomersRepository : ICustomersRepository
             })
             .FirstOrDefaultAsync();
     }
+
+    public async Task<Customer?> GetByIdAsync(Guid customerId)
+    {
+        return await _dbContext.Customers
+            .AsNoTracking()
+            .Where(item => item.StateRecord == "A" && item.CustomerId == customerId)
+            .Select(item => new Customer
+            {
+                customerId = item.CustomerId,
+                firstName = item.FirstName,
+                lastName = item.LastName,
+                documentNumber = item.DocumentNumber
+            })
+            .FirstOrDefaultAsync();
+    }
 }

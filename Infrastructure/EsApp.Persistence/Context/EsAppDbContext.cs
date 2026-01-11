@@ -231,6 +231,14 @@ public class EsAppDbContext : DbContext
                 CurrencyId = bobCurrencyId,
                 StateRecord = "A",
                 CreationDate = seedDate
+            },
+            new ServiceProviderEntity
+            {
+                ServiceProviderId = Guid.Parse("f7f18c0a-2f04-4c8f-9d17-9f0f8c3e7e2a"),
+                Service = "Starlink",
+                CurrencyId = usdCurrencyId,
+                StateRecord = "A",
+                CreationDate = seedDate
             }
         );
     }

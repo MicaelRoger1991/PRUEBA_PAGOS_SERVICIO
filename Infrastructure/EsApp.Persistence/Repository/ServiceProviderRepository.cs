@@ -29,4 +29,22 @@ public class ServiceProviderRepository : IServiceProviderRepository
             })
             .ToListAsync();
     }
+
+    public async Task<ServiceProvider?> GetByIdAsync(Guid serviceProviderId)
+    {
+        return await _dbContext.ServiceProvider
+            .AsNoTracking()
+            .Include(item => item.Currency)
+            .Where(item => item.StateRecord == "A" &&
+                item.ServiceProviderId == serviceProviderId &&
+                item.Currency.StateRecord == "A")
+            .Select(item => new ServiceProvider
+            {
+                serviceProviderId = item.ServiceProviderId,
+                service = item.Service,
+                currencyId = item.CurrencyId,
+                currency = item.Currency.ShortName
+            })
+            .FirstOrDefaultAsync();
+    }
 }

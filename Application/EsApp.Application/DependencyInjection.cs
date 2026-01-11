@@ -2,6 +2,7 @@ using System;
 using EsApp.Application.Auth;
 using EsApp.Application.Customers;
 using EsApp.Application.Parametrics;
+using EsApp.Application.Payments;
 using EsApp.Application.ServiceProvider;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrencyService, CurrencyService>();
         services.AddScoped<IServiceProviderService, ServiceProviderService>();
         services.AddScoped<ICustomersService, CustomersService>();
+        services.AddScoped<IPaymentsService, PaymentsService>();
 
 
         return services;

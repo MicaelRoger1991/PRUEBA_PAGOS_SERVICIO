@@ -3,6 +3,7 @@ using EsApp.CROSS.Encrypt;
 using EsApp.Domain.Auth;
 using EsApp.Domain.Customers;
 using EsApp.Domain.Parametrics;
+using EsApp.Domain.Payments;
 using EsApp.Domain.ServiceProvider;
 using EsApp.Domain.Token;
 using EsApp.Persistence.Context;
@@ -41,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         services.AddScoped<IServiceProviderRepository, ServiceProviderRepository>();
         services.AddScoped<ICustomersRepository, CustomersRepository>();
+        services.AddScoped<IPaymentsRepository, PaymentsRepository>();
         return services;
     }
 }

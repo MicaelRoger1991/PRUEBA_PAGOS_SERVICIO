@@ -274,6 +274,14 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
                             CurrencyId = new Guid("d29fba7e-1a2b-4fe7-8c2f-813a4e5ec5a0"),
                             Service = "Telecomunicaciones",
                             StateRecord = "A"
+                        },
+                        new
+                        {
+                            ServiceProviderId = new Guid("f7f18c0a-2f04-4c8f-9d17-9f0f8c3e7e2a"),
+                            CreationDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CurrencyId = new Guid("5d8f6a1d-9c2a-4b2f-9d2c-3189d9a21c4b"),
+                            Service = "Starlink",
+                            StateRecord = "A"
                         });
                 });
 
