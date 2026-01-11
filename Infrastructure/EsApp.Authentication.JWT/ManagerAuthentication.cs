@@ -28,7 +28,7 @@ public class ManagerAuthentication : IManagerAuthentication
         var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, request.user),
-                new Claim("role", JsonSerializer.Serialize(request.role)),
+                new Claim("role", request.role),
                 new Claim(ClaimTypes.Name, request.name)
             };
         var claimsIdentity = new ClaimsIdentity(claims, "Token");

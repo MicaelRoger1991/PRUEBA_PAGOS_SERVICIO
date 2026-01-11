@@ -15,6 +15,15 @@
     <Folder Include="Auth/" />
     <Folder Include="Auth/Request/" />
     <Folder Include="Auth/Response/" />
+    <Folder Include="Customers/" />
+    <Folder Include="Customers/Request/" />
+    <Folder Include="Customers/Response/" />
+    <Folder Include="Parametrics/" />
+    <Folder Include="Parametrics/Request/" />
+    <Folder Include="Parametrics/Response/" />
+    <Folder Include="ServiceProvider/" />
+    <Folder Include="ServiceProvider/Request/" />
+    <Folder Include="ServiceProvider/Response/" />
   </ItemGroup>
 
   <ItemGroup>

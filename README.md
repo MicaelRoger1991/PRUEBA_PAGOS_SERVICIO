@@ -1,22 +1,21 @@
-# PRUEBA_PAGOS_SERVICIO
-Solución interna para registrar pagos de servicios básicos (agua, electricidad, telecomunicaciones) de clientes
+# PRUEBA PAGOS SERVICIO
 Solución interna para registrar pagos de servicios básicos (agua, electricidad, telecomunicaciones) de clientes.
 
-## Requisitos locales
+## 1. Requisitos locales
 - .NET 8
 - Docker (PostgreSQL local)
 
-## Base de datos (PostgreSQL en Docker)
+## 2. Base de datos (PostgreSQL en Docker)
 Contenedor: `postgres-container`
 
-### Credenciales sugeridas
+### 2.1 Credenciales sugeridas
 - Superusuario: `postgres`
-- Password: `TuPasswordSegura1234@*+`
+- Password: `TuPassword`
 - Usuario app: `userdb_esapp`
 - Password app: `userdb_esapp`
 - Base de datos: `db_esapp`
 
-### Crear usuario y base
+### 2.2 Crear usuario y base
 Ejecuta estos comandos una sola vez:
 
 ```bash
@@ -25,7 +24,7 @@ docker exec -it postgres-container psql -U postgres -c "CREATE DATABASE db_esapp
 docker exec -it postgres-container psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE db_esapp TO userdb_esapp;"
 ```
 
-## Configuración de conexión (appsettings.json)
+## 3. Configuración de conexión (appsettings.json)
 La app usa `DataBaseSettings` con password cifrado y `secretKey` para desencriptar.
 
 Ejemplo de configuración:
@@ -45,7 +44,7 @@ Ejemplo de configuración:
 "secretKey": "QWERTY0123456789"
 ```
 
-### Cómo cifrar el password
+### 3.1 Cómo cifrar el password
 Usa `SecurityEncrypt` (mismo algoritmo que `DataAccess`). Puedes usar este snippet en una consola temporal:
 
 ```csharp
@@ -57,33 +56,38 @@ Console.WriteLine(encrypt.encrypt("userdb_esapp"));
 
 Pega el resultado en `Password` dentro de `appsettings.json`.
 
-## EF Core (Code First) - Plan de migración
-Este proyecto migrará desde ADO.NET a EF Core con enfoque Code First.
-
+## 4. EF - Plan de migración (Code First)
 Pasos generales:
 1) Agregar paquetes EF Core para PostgreSQL.
 2) Crear `DbContext` y entidades mínimas (auth/sessions).
 3) Crear migraciones iniciales y aplicar a la base (`dotnet ef database update`).
 4) Reemplazar `DataAccess` y repositorios ADO por repositorios EF.
 
-## EF Core (Code First) - Paso a paso
+## 5. EF - Paso a paso
 1) Asegura Postgres arriba y la BD creada (ver sección de Base de datos).
 2) Restaura paquetes:
 ```bash
 dotnet restore
 ```
-3) Instala la herramienta de migraciones (si no la tienes):
+1) Instala la herramienta de migraciones 
 ```bash
 dotnet tool install --global dotnet-ef
 ```
-4) Crea la migración inicial:
+1) Crea la migración inicial:
 ```bash
 dotnet ef migrations add InitialCreate \
   -p Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj \
   -s Presentation/EsApp.Api/EsApp.Api.csproj \
   -o Infrastructure/EsApp.Persistence/Migrations
 ```
-5) Aplica la migración a la base:
+Si ya existe `InitialCreate`, crea una migración nueva con otro nombre, por ejemplo:
+```bash
+dotnet ef migrations add AddPaymentsServices \
+  -p Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj \
+  -s Presentation/EsApp.Api/EsApp.Api.csproj \
+  -o Infrastructure/EsApp.Persistence/Migrations
+```
+1) Aplica la migración a la base:
 ```bash
 dotnet ef database update \
   -p Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj \
@@ -94,7 +98,7 @@ Notas:
 - La conexión se construye desde `DataBaseSettings` usando `ISecurityEncrypt`.
 - Si la red está restringida, habilita acceso a NuGet antes de `dotnet restore`.
 
-## Usuarios de prueba (seed)
+## 6. Usuarios de prueba
 Se insertan 3 usuarios al aplicar migraciones (tabla `usersMaster`):
 - `caja` / pass: `123abc` / rol: `CAJA`
 - `plataforma` / pass: `123abc` / rol: `PLATAFORMA`
@@ -102,10 +106,14 @@ Se insertan 3 usuarios al aplicar migraciones (tabla `usersMaster`):
 
 Estos usuarios sirven para probar el login/JWT desde el inicio.
 
-## Cómo consumir el API (Auth)
-Flujo simple para probar autenticación:
+Se insertan 2 clientes de prueba (tabla `customers`):
+- `Carlos Lopez` / documento: `12345678`
+- `Maria Fernandez` / documento: `87654321`
 
-1) Login (obligatorio para obtener token)
+## 7. Cómo consumir el API
+Flujo simple para probar el API (todos los endpoints requieren JWT):
+
+1) Auth - Login (obligatorio para obtener token)
 ```http
 POST /Auth/Login
 Content-Type: application/json
@@ -116,7 +124,7 @@ Content-Type: application/json
 }
 ```
 
-2) Refresh token (cuando el token expira)
+2) Auth - RefreshToken (cuando el token expira)
 ```http
 PUT /Auth/RefreshToken
 Content-Type: application/json
@@ -127,12 +135,30 @@ Content-Type: application/json
 }
 ```
 
-3) Consumir endpoints protegidos
+3) Parametrics - GetCurrency
+Sirve para obtener los tipos de moneda disponibles y su ID (datos paramétricos).
+```http
+GET /Parametrics/GetCurrency
+```
+
+4) ServiceProvider - GetServiceProvider
+Lista los servicios que se pueden pagar y su tipo de moneda.
+```http
+GET /ServiceProvider/GetServiceProvider
+```
+
+5) Customers - GetCustomerByDocumentNumber
+Busca cliente por número de documento. Requiere JWT y rol **CAJA**, **PLATAFORMA** o **GERENTE**.
+```http
+GET /Customers/GetCustomerByDocumentNumber?documentNumber=12345678
+```
+
+6) Header para endpoints protegidos
 ```http
 Authorization: Bearer <token>
 ```
 
-## Arquitectura
+## 8. Arquitectura
 Se usa una arquitectura modular con enfoque hexagonal:
 - `Presentation`: endpoints, middleware y configuración de la API.
 - `Application`: casos de uso y validaciones.
@@ -146,25 +172,19 @@ Buenas prácticas aplicadas:
 - DTOs/Request/Response y validaciones en Application.
 - Configuración centralizada y reutilizable.
 
-## Solución de problemas
-### Error al instalar dotnet-ef
-Si ves un error tipo `DotnetToolSettings.xml was not found`, limpia caches y reinstala:
+## 9. Avance del examen (lo ya logrado)
+- Migración a EF Core (Code First) con PostgreSQL.
+- Esquema completo y relaciones: usuarios, sesiones, monedas, clientes, proveedores y pagos.
+- Usuarios, clientes y catálogos para pruebas rápidas.
+- Endpoints listos (monedas, servicios, clientes por documento).
 
-```bash
-dotnet nuget locals all --clear
-dotnet tool uninstall --global dotnet-ef
-dotnet tool install --global dotnet-ef --version 9.0.0
-```
+## 10. Extras no solicitados (pero ya incluidos)
+- Login con JWT + refresh token.
+- Control de rol en endpoints (ej. clientes solo CAJA/PLATAFORMA/GERENTE).
+- Test unitario básico para encriptación.
 
-### Error de compilación al generar migraciones
-Si `dotnet ef migrations add` falla con "Build failed":
-1) Compila para ver el error real:
-```bash
-dotnet build Presentation/EsApp.Api/EsApp.Api.csproj -v minimal
-```
-2) Corrige los errores y vuelve a ejecutar la migración.
 
-## Tests
+## 11. Tests
 Proyecto de pruebas: `Presentation/EsApp.Api.Test`
 
 ### Prueba de encriptación

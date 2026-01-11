@@ -22,6 +22,8 @@
     <Folder Include="Abstractions/" />
     <Folder Include="EndPoints/" />
     <Folder Include="EndPoints/Auth/" />
+    <Folder Include="EndPoints/Customers/" />
+    <Folder Include="EndPoints/Parametrics/" />
     <Folder Include="EndPoints/PaymentsServices/" />
     <Folder Include="EndPoints/ServiceProvider/" />
     <Folder Include="Extensions/" />

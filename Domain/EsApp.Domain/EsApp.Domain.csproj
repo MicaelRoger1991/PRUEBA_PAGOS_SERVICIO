@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <Folder Include="Auth/" />
+    <Folder Include="Customers/" />
+    <Folder Include="Parametrics/" />
+    <Folder Include="ServiceProvider/" />
     <Folder Include="Token/" />
   </ItemGroup>
 

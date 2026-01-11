@@ -3,6 +3,7 @@ using System;
 using EsApp.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
 {
     [DbContext(typeof(EsAppDbContext))]
-    partial class EsAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260111202527_AddPaymentsServices")]
+    partial class AddPaymentsServices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,10 +56,8 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
 
                     b.Property<string>("StateRecord")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1)
                         .HasColumnType("character varying(1)")
-                        .HasDefaultValue("A")
                         .HasColumnName("stateRecord");
 
                     b.HasKey("CurrencyId");
@@ -95,12 +96,6 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
                         .HasColumnName("creationDate")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<string>("DocumentNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)")
-                        .HasColumnName("documentNumber");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -119,10 +114,8 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
 
                     b.Property<string>("StateRecord")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1)
                         .HasColumnType("character varying(1)")
-                        .HasDefaultValue("A")
                         .HasColumnName("stateRecord");
 
                     b.HasKey("CustomerId");
@@ -134,7 +127,6 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
                         {
                             CustomerId = new Guid("81b7d3a3-9e4b-4f5c-9d64-3d1d8f9b1a6c"),
                             CreationDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DocumentNumber = "12345678",
                             FirstName = "Carlos",
                             LastName = "Lopez",
                             StateRecord = "A"
@@ -143,7 +135,6 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
                         {
                             CustomerId = new Guid("f3dbb0f0-9c42-4fa1-8e4d-1437254a9d0f"),
                             CreationDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DocumentNumber = "87654321",
                             FirstName = "Maria",
                             LastName = "Fernandez",
                             StateRecord = "A"
@@ -182,10 +173,8 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
 
                     b.Property<string>("StateRecord")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1)
                         .HasColumnType("character varying(1)")
-                        .HasDefaultValue("A")
                         .HasColumnName("stateRecord");
 
                     b.Property<string>("Status")
@@ -238,10 +227,8 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
 
                     b.Property<string>("StateRecord")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1)
                         .HasColumnType("character varying(1)")
-                        .HasDefaultValue("A")
                         .HasColumnName("stateRecord");
 
                     b.HasKey("ServiceProviderId");
@@ -320,10 +307,8 @@ namespace EsApp.Persistence.Infrastructure.EsApp.Persistence.Migrations
 
                     b.Property<string>("StateRecord")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1)
                         .HasColumnType("character varying(1)")
-                        .HasDefaultValue("A")
                         .HasColumnName("stateRecord");
 
                     b.Property<string>("UserRegistration")
