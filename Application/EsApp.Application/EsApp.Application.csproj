@@ -6,4 +6,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Auth/" />
+    <Folder Include="Auth/Request/" />
+    <Folder Include="Auth/Response/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Core/EsApp.CROSS.Shared/EsApp.CROSS.Shared.csproj" />
+    <ProjectReference Include="../../Domain/EsApp.Domain/EsApp.Domain.csproj" />
+    <ProjectReference Include="../../Infrastructure/EsApp.Authentication.JWT/EsApp.Authentication.JWT.csproj" />
+    <ProjectReference Include="../../Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>

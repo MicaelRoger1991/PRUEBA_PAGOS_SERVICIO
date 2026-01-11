@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Auth/" />
+    <Folder Include="Token/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Core/EsApp.CROSS.Shared/EsApp.CROSS.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -4,17 +4,38 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Abstractions/" />
     <Folder Include="EndPoints/" />
+    <Folder Include="EndPoints/Auth/" />
+    <Folder Include="EndPoints/PaymentsServices/" />
+    <Folder Include="EndPoints/ServiceProvider/" />
     <Folder Include="Extensions/" />
+    <Folder Include="Extensions/Swagger/" />
     <Folder Include="Middleware/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Application/EsApp.Application/EsApp.Application.csproj" />
+    <ProjectReference Include="../../Core/EsApp.CROSS.Encrypt/EsApp.CROSS.Encrypt.csproj" />
+    <ProjectReference Include="../../Core/EsApp.CROSS.Logger/EsApp.CROSS.Logger.csproj" />
+    <ProjectReference Include="../../Core/EsApp.CROSS.Shared/EsApp.CROSS.Shared.csproj" />
+    <ProjectReference Include="../../Infrastructure/EsApp.Authentication.JWT/EsApp.Authentication.JWT.csproj" />
+    <ProjectReference Include="../../Infrastructure/EsApp.Persistence/EsApp.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
